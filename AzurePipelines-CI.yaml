@@ -19,10 +19,10 @@ steps:
     SourceFolder: '$(system.defaultworkingdirectory)'
     Contents: '**/*.jar'
     TargetFolder: '$(build.artifactstagingdirectory)'
-  condition: succeeded
+  condition: succeeded()
 
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Artifact[*.jar] to Drop Location for CD Pipeline'
   inputs:
     PathtoPublish: '$(build.artifactstagingdirectory)'
-  condition: succeeded
+  condition: succeeded()
