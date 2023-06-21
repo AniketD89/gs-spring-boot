@@ -1,24 +1,28 @@
 pool:
-  vmImage: 'ubuntu-16.04' # Hosted Ubuntu 1604
+  name: SelfHostedAgentPool
   demands: maven
 
 steps:
 - task: Maven@3
-  displayName: 'Maven app/pom.xml'
+  displayName: 'Maven Task - Build Java App'
   inputs:
     mavenPomFile: 'app/pom.xml'
+    goals: 'clean package'
     codeCoverageToolOption: Cobertura
+    mavenVersionOption: Path
+    mavenDirectory: 'C:\AWS DevOps\Devops softwares\Maven\apache-maven-3.8.6'
+    mavenSetM2Home: true
 
 - task: CopyFiles@2
-  displayName: 'Copy Files to: $(build.artifactstagingdirectory)'
+  displayName: 'Copy Built App[*.jar] to Artifact Staging Directory'
   inputs:
     SourceFolder: '$(system.defaultworkingdirectory)'
     Contents: '**/*.jar'
     TargetFolder: '$(build.artifactstagingdirectory)'
-  condition: succeededOrFailed()
+  condition: succeeded
 
 - task: PublishBuildArtifacts@1
-  displayName: 'Publish Artifact: drop'
+  displayName: 'Publish Artifact[*.jar] to Drop Location for CD Pipeline'
   inputs:
     PathtoPublish: '$(build.artifactstagingdirectory)'
-  condition: succeededOrFailed()
+  condition: succeeded
